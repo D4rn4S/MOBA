@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GamemasterService, iGamestate } from '../gamemaster.service';
 
 @Component({
   selector: 'app-board',
@@ -14,74 +15,94 @@ export class BoardComponent implements OnInit {
   curColumns: any;
   rows: number = 6;
   columns: number = 7;
-  playerText: string = "Spieler 1 ist am Zug!"
+  playerText: string = 'Spieler 1 ist am Zug!';
+  gamestate: iGamestate = this.gameMaster.getEmptyGameState();
 
-  constructor() {}
+  constructor(private gameMaster: GamemasterService) {}
 
   ngOnInit(): void {
     this.setGame();
+    this.gameMaster.getHallo();
+    this.gameMaster.gamestateSubject.subscribe((gameState) => {
+      console.log(gameState);
+    });
   }
 
   setGame = () => {
     this.board = [];
     this.curColumns = [5, 5, 5, 5, 5, 5, 5];
-  
+
     for (let i = 0; i < this.rows; i++) {
       //i is row
       let row = [];
       for (let j = 0; j < this.columns; j++) {
         //j is column
-        row.push(" ");
-  
-        let tile = document.createElement("div");
-        console.log(`${i.toString()}-${j.toString()}`);
-        tile.id = `${i.toString()}-${j.toString()}`;
-        tile.classList.add("tile");
-        tile.addEventListener("click", this.setPiece);
-        document!.getElementById("board")!.append(tile);
+        row.push(' ');
       }
       this.board.push(row);
     }
+
+    let tile: HTMLCollectionOf<Element> =
+      document.getElementsByClassName('tile');
+    for (var i = 0; i < tile.length; i++) {
+      tile[i].addEventListener('click', (event) => {
+        this.setPiece(event);
+      });
+    }
   };
 
-  setPiece = () => {
+  setPiece = (id?: any) => {
     //hier macht ne arrow function kein sinn, weil der Scope sonst nicht passt
     if (this.gameOver) {
       return;
     }
-    console.log(this);
-    let coords = this.id.split("-");
+    console.log(id.path[0].id);
+    let coords = id.path[0].id.split('-');
     let r = parseInt(coords[0]);
     let c = parseInt(coords[1]);
-  
+
     r = this.curColumns[c];
     if (r < 0) {
       return;
     }
-  
+
     this.board[r][c] = this.curPlayer;
-    let tile = document.getElementById(r.toString() + "-" + c.toString());
+    let tile = document.getElementById(r.toString() + '-' + c.toString());
     if (this.curPlayer == this.player1) {
-      tile!.classList.add("red-piece");
-      this.playerText = "Player 2 ist jetzt dran"
+      tile!.classList.add('red-piece');
+      this.playerText = 'Player 2 ist jetzt dran';
       this.curPlayer = this.player2;
+      //gamestate change
+      this.gamestate = {
+        playerText: 'Player 2 ist jetzt dran',
+        gameOver: this.gamestate.gameOver,
+        move: this.gamestate.move + 1,
+      };
+      this.gameMaster.updateGameState(this.gamestate);
     } else {
-      tile!.classList.add("yellow-piece");
-      this.playerText = "Player 1 ist jetzt dran"
+      tile!.classList.add('yellow-piece');
+      this.playerText = 'Player 1 ist jetzt dran';
       this.curPlayer = this.player1;
+      //gamestate change
+      this.gamestate = {
+        playerText: 'Player 1 ist jetzt dran',
+        gameOver: this.gamestate.gameOver,
+        move: this.gamestate.move + 1,
+      };
+      this.gameMaster.updateGameState(this.gamestate);
     }
-  
+
     r -= 1; //update row hight for column
     this.curColumns[c] = r; //update the array
     console.log(this.board);
     this.checkWinner();
-  }
+  };
 
   checkWinner = () => {
     //horizontal
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.columns - 3; c++) {
-        if (this.board[r][c] != " ") {
+        if (this.board[r][c] != ' ') {
           if (
             this.board[r][c] == this.board[r][c + 1] &&
             this.board[r][c + 1] == this.board[r][c + 2] &&
@@ -93,11 +114,11 @@ export class BoardComponent implements OnInit {
         }
       }
     }
-  
+
     //vertikal
     for (let c = 0; c < this.columns; c++) {
       for (let r = 0; r < this.rows - 3; r++) {
-        if (this.board[r][c] != " ") {
+        if (this.board[r][c] != ' ') {
           if (
             this.board[r][c] == this.board[r + 1][c] &&
             this.board[r + 1][c] == this.board[r + 2][c] &&
@@ -109,11 +130,11 @@ export class BoardComponent implements OnInit {
         }
       }
     }
-  
+
     //anti-diagonal
     for (let r = 0; r < this.rows - 3; r++) {
       for (let c = 0; c < this.columns - 3; c++) {
-        if (this.board[r][c] != " ") {
+        if (this.board[r][c] != ' ') {
           if (
             this.board[r][c] == this.board[r + 1][c + 1] &&
             this.board[r + 1][c + 1] == this.board[r + 2][c + 2] &&
@@ -125,11 +146,11 @@ export class BoardComponent implements OnInit {
         }
       }
     }
-  
+
     //diagonal
     for (let r = 3; r < this.rows; r++) {
       for (let c = 0; c < this.columns - 3; c++) {
-        if (this.board[r][c] != " ") {
+        if (this.board[r][c] != ' ') {
           if (
             this.board[r][c] == this.board[r - 1][c + 1] &&
             this.board[r - 1][c + 1] == this.board[r - 2][c + 2] &&
@@ -144,11 +165,25 @@ export class BoardComponent implements OnInit {
   };
 
   setWinner = (r: number, c: number) => {
-    let winner = document.getElementById("winner");
+    let winner = document.getElementById('winner');
     if (this.board[r][c] == this.player1) {
-      winner!.innerText = "Rot Gewinnt!";
+      winner!.innerText = 'Rot Gewinnt!';
+      //gamestate change
+      this.gamestate = {
+        playerText: this.gamestate.playerText,
+        gameOver: true,
+        move: this.gamestate.move,
+      };
+      this.gameMaster.updateGameState(this.gamestate);
     } else {
-      winner!.innerText = "Gelb Gewinnt!";
+      winner!.innerText = 'Gelb Gewinnt!';
+      //gamestate change
+      this.gamestate = {
+        playerText: this.gamestate.playerText,
+        gameOver: true,
+        move: this.gamestate.move,
+      };
+      this.gameMaster.updateGameState(this.gamestate);
     }
     this.gameOver = true;
   };
