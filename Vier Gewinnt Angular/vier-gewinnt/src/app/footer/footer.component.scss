@@ -2,5 +2,39 @@
 .footer{
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: brown;
+    background-color: black;
+    padding-top:10px ;
+    .wrapper{
+        display:grid;
+        grid-template-columns: repeat(8,1fr);
+        .yellowChips{
+            grid-column:2;
+            border-radius: 50%;
+            background-color: yellow;
+            border: 5px solid darkgoldenrod;
+            h1{
+                margin:18px 25px 18px 25px;
+            }
+        }
+        .redChips{
+            grid-column:7;
+            border-radius: 50%;
+            background-color: red;
+            border: 5px solid darkred;
+            h1{
+                margin:18px 25px 18px 25px;
+            }
+        }
+
+        .timer{
+            grid-column: span 4;
+            color:white;
+            h3{
+                margin:5px;
+            }
+            h1{
+                margin:0;
+            }
+        }
+    }
 }
