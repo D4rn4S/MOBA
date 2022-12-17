@@ -3,5 +3,61 @@
 .header{
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
-    background-color: burlywood;
+
+    .main_titel{
+        color:white;
+        margin-top: 20px;
+    }
+    .wrapper{
+        display:grid;
+        grid-template-columns: repeat(3,1fr);
+
+        .subwrapper{
+            .space{
+                height:50px;
+            }
+            .titel{
+                border-radius: 15px 15px 0px 0px;
+                background-color: white;
+            }
+        }
+ 
+        .player_icon{
+            img{
+                height:100%;
+                width:80%;
+            }
+        }
+    }
+    .player_text{
+        background-color: white;
+        .player{
+            display:grid;
+            grid-template-columns: repeat(3,1fr);
+            #zug{
+                color:red;
+            }
+        }
+    }
+
+}
+
+@media screen and (max-width:650px) {
+    .header{
+        .wrapper{
+            .titel{
+                padding: 10px;
+                h2{
+                    font-size: 20px;
+                    margin:0;
+                }
+            } 
+        }
+        .player_text{
+            h3{
+                font-size: 18px;
+                margin: 10px;
+            }
+        }
+    }
 }
