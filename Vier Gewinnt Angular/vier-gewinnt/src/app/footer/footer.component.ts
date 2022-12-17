@@ -7,6 +7,8 @@ import { GamemasterService, iGamestate } from '../gamemaster.service';
   styleUrls: ['./footer.component.scss'],
 })
 export class FooterComponent implements OnInit {
+  player1Count:number = 0;
+  player2Count:number = 0;
   gamestate: iGamestate = this.gameMaster.getEmptyGameState();
 
   constructor(private gameMaster: GamemasterService) {}
@@ -15,5 +17,10 @@ export class FooterComponent implements OnInit {
     this.gameMaster.gamestateSubject.subscribe((newState) => {
       this.gamestate = newState;
     });
+
+    this.gameMaster.playerCountSubject.subscribe((playerCount) => {
+      this.player1Count = playerCount.player1Count;
+      this.player2Count = playerCount.player2Count;
+    })
   }
 }

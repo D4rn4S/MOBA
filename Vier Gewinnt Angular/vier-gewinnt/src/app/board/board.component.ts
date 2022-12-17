@@ -70,25 +70,27 @@ export class BoardComponent implements OnInit {
     let tile = document.getElementById(r.toString() + '-' + c.toString());
     if (this.curPlayer == this.player1) {
       tile!.classList.add('red-piece');
-      this.playerText = 'Player 2 ist jetzt dran';
+      this.playerText = 'Player 2 ist am Zug';
       this.curPlayer = this.player2;
       //gamestate change
       this.gamestate = {
-        playerText: 'Player 2 ist jetzt dran',
+        playerText: 'Player 2 ist am Zug',
         gameOver: this.gamestate.gameOver,
         move: this.gamestate.move + 1,
       };
+      this.gameMaster.addPlayer1MoveCount();
       this.gameMaster.updateGameState(this.gamestate);
     } else {
       tile!.classList.add('yellow-piece');
-      this.playerText = 'Player 1 ist jetzt dran';
+      this.playerText = 'Player 1 ist am Zug';
       this.curPlayer = this.player1;
       //gamestate change
       this.gamestate = {
-        playerText: 'Player 1 ist jetzt dran',
+        playerText: 'Player 1 ist am Zug',
         gameOver: this.gamestate.gameOver,
         move: this.gamestate.move + 1,
       };
+      this.gameMaster.addPlayer2MoveCount();
       this.gameMaster.updateGameState(this.gamestate);
     }
 
