@@ -1,0 +1,31 @@
+
+
+.content{
+    display:flex;
+    justify-content: center;
+
+    #board{
+        height: 540px;
+        width: 630px;
+        background-color: blue;
+        border: 10px solid navy;
+        display: grid;
+        grid-template-columns: repeat(7,1fr);
+    }
+    .tile {
+        height: 70px;
+        width: 70px;
+        margin: 5px;
+        background-color: white;
+        border-radius: 50%;
+        border: 5px solid navy;
+    }
+
+    .red-piece {
+        background-color: red;
+    }
+    
+    .yellow-piece {
+        background-color: yellow;
+    }
+}
